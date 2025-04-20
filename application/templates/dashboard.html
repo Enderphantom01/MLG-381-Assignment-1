@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header>
+    <h1>Student GPA Predictor</h1>
+    <p>Predict academic performance based on student metrics</p>
+</header>
+
+<main>
+    <section class="input-section">
+        <h2>Input Student Data</h2>
+        <form id="prediction-form">
+            <div class="form-group">
+                <label for="StudyTimeWeekly">Weekly Study Time (hours)</label>
+                <input type="number" step="0.1" id="StudyTimeWeekly" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="Absences">Number of Absences</label>
+                <input type="number" id="Absences" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="Tutoring">Tutoring (0=No, 1=Yes)</label>
+                <select id="Tutoring" required>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="ParentalSupport">Parental Support Level (1-3)</label>
+                <select id="ParentalSupport" required>
+                    <option value="1">Low</option>
+                    <option value="2" selected>Medium</option>
+                    <option value="3">High</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="EngagementIndex">Engagement Index (0-5)</label>
+                <input type="number" step="0.1" min="0" max="5" id="EngagementIndex" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="AttendanceRate">Attendance Rate (%)</label>
+                <input type="number" step="0.1" min="0" max="100" id="AttendanceRate" required>
+            </div>
+            
+            <button type="submit">Predict GPA</button>
+        </form>
+    </section>
+    
+    <section class="results-section">
+        <h2>Prediction Results</h2>
+        <div class="result-card">
+            <div class="gpa-display">
+                <span id="gpa-value">--</span>
+                <span class="gpa-label">Predicted GPA</span>
+            </div>
+            <canvas id="gpa-chart"></canvas>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>GPA Prediction Model | R² = 0.947</p>
+</footer>
+{% endblock %}
