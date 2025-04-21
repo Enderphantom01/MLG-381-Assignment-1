@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Color code GPA result
                 const gpa = parseFloat(data.predicted_gpa);
                 gpaDisplay.style.color = 
-                    gpa >= 3.5 ? '#2ecc71' : 
+                    gpa >= 3.5 ? '#6dfb01' : 
                     gpa >= 2.0 ? '#f39c12' : '#e74c3c';
             } else {
                 alert('Prediction failed: ' + data.message);
