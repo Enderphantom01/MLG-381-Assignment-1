@@ -67,6 +67,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     Math.abs(formData.EngagementIndex * 0.2),
                     Math.abs(formData.ParentalSupport * 0.1)
                 ];
+
+                const gradeElement = document.getElementById('grade-value');
+                 if (gradeElement) {
+                    gradeElement.textContent = data.predicted_grade;
+                }
                 gpaChart.update();
                 
                 // Color code GPA result
