@@ -5,8 +5,11 @@ from pathlib import Path
 app = Flask(__name__)
 app.static_folder = 'static'
 
-# Load model
-model_path = Path(__file__).resolve().parent / "gda_model.pkl"
+import os
+project_root = Path(__file__).resolve().parent.parent
+
+
+model_path = project_root / 'application' / 'gda_model.pkl'
 model = joblib.load(model_path)
 
 
