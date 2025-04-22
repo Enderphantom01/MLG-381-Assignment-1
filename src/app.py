@@ -10,22 +10,19 @@ import os
 
 from pathlib import Path
 import joblib
+import pickle
 
 # Get the directory where the script is located
 script_dir = Path(__file__).parent
 
 # Define paths relative to the script directory
 data_dir = script_dir.parent / "data"
-artifacts_dir = script_dir.parent / "artifacts"
 
 # Create directories if they don't exist
 data_dir.mkdir(parents=True, exist_ok=True)
-artifacts_dir.mkdir(parents=True, exist_ok=True)
 
 # Define file paths
 test_data = data_dir / 'test.csv'
-m1 = artifacts_dir / 'model_1.pkl'
-m2 = artifacts_dir / 'model_2.pkl'
 
 
 
@@ -47,15 +44,6 @@ colors = {
     'dark': '#343a40',
 }
 
-# Function to load models
-def load_models():
-    try:
-        model_1 = joblib.load(m1)
-        model_2 = joblib.load(m2)
-        return (model_1, model_2)
-    except Exception as e:
-        print(f"Error loading models: {e}")
-        return None, None
 
 # Function to load test data
 def load_test_data():
@@ -76,16 +64,14 @@ def load_test_data():
         })
 
 # Load models and data
-model_1, model_2 = load_models()
+model_1 = joblib.load(Path(__file__).resolve().parent /"model_1.pkl")
+model_2 = joblib.load(Path(__file__).resolve().parent /"model_2.pkl")
+print(type(model_1))
+print(type(model_2))
 
-
-print()
 test_data = load_test_data()
-X_test = test_data.drop(['GradeClass'], axis=1)
-y_pred = model_1.predict(X_test)
-print(y_pred)
 
-
+print(test_data.head())
 # Function to preprocess data for prediction
 def preprocess_data(input_data):
     # Create a DataFrame from input values
@@ -178,7 +164,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background'], 'padding':
                         dcc.Slider(
                             id='parental-support',
                             min=1,
-                            max=3,
+                            max=4,
                             value=2,
                             marks={1: '1', 2: '2', 3: '3', 4: '4'},
                             step=1,
@@ -189,8 +175,11 @@ app.layout = html.Div(style={'backgroundColor': colors['background'], 'padding':
                 html.Div([
                     html.Label("Engagement Index"),
                     dcc.Dropdown(id='engagement', options=[
-                        {'label': 'High', 'value': 1},
-                        {'label': 'Low', 'value': 0}
+                        {'label': 'Extremely Engaged', 'value': 4},
+                        {'label': 'Very Engaged', 'value': 3},
+                        {'label': 'Engaged', 'value': 2},
+                        {'label': 'Low Engagement', 'value': 1},
+                        {'label': 'No Engagement', 'value': 0}
                     ], value=1, style={'width': '100%', 'marginBottom': '10px'})
                 ]),
                 html.Div([
@@ -286,7 +275,7 @@ def update_prediction(n_clicks, study_time, absences, tutoring, parental_support
         ], style={'width': '45%', 'padding': '15px', 'border': f'2px solid {colors["info"]}', 'borderRadius': '5px'}),
         
         html.Div([
-            html.H4("Deep Learning Model", style={'color': colors['success']}),
+            html.H4("XGBoost Model", style={'color': colors['success']}),
             html.H2(f"{dl_pred:.1f} ({dl_letter})", style={'color': colors['dark'], 'textAlign': 'center'})
         ], style={'width': '45%', 'padding': '15px', 'border': f'2px solid {colors["success"]}', 'borderRadius': '5px'})
     ], style={'display': 'flex', 'justifyContent': 'space-between'})
@@ -405,18 +394,15 @@ def update_model_comparison(n_clicks):
         y_pred_rf = np.array([2.0] * len(X))
     
     if model_2 is not None:
-        y_pred_dl = model_2.predict(X_scaled)
-        # Ensure it's flattened to 1D array
-        if y_pred_dl.ndim > 1:
-            y_pred_dl = y_pred_dl.flatten()
+        y_pred_xgb = model_2.predict(X)
     else:
-        y_pred_dl = np.array([2.0] * len(X))
+        y_pred_xgb = np.array([2.0] * len(X))
     
     # Create DataFrame for plotting
     comparison_df = pd.DataFrame({
         'Student': [f'Student {i+1}' for i in range(len(X))],
         'Random Forest': y_pred_rf,
-        'Deep Learning': y_pred_dl
+        'XGBoost': y_pred_xgb
     })
     
     if y_actual is not None:
