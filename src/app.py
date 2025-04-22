@@ -23,7 +23,7 @@ grade_map = {
     0: 'F (<1.0)'
 }
 
-# Calculate scaling parameters from the test data (assuming it represents the training distribution)
+# Calculate scaling parameters from the test data 
 scaler = StandardScaler()
 numerical_cols = ['Age', 'StudyTimeWeekly', 'Absences', 'TotalActivities']
 scaler.fit(df[numerical_cols])
@@ -48,17 +48,17 @@ def get_model_preds(data):
 
 # Prediction helper
 def predict_grade_from_input(user_inputs):
-    # Process numerical inputs - scale them using the same scaler as training data
+
     numerical_values = np.array([
         user_inputs['age'],
         user_inputs['study'],
         user_inputs['absences'],
-        0  # Placeholder for TotalActivities (will be calculated)
+        0  
     ]).reshape(1, -1)
     
     scaled_values = scaler.transform(numerical_values)
 
-    # Create input dictionary with scaled values
+
     input_dict = {
         'Age': scaled_values[0][0],
         'StudyTimeWeekly': scaled_values[0][1],
@@ -70,7 +70,7 @@ def predict_grade_from_input(user_inputs):
         'Volunteering': user_inputs['volunteer'],
     }
 
-    # Add all encoded categorical features (default to False)
+
     categorical_flags = {
         'Gender_1': False,
         'Ethnicity_1': False,
@@ -117,8 +117,7 @@ def predict_grade_from_input(user_inputs):
 
     # Ensure boolean features are typed correctly
     bool_cols = [col for col in input_df.columns if input_df[col].dtype == 'bool']
-    input_df[bool_cols] = input_df[bool_cols].astype(int)  # Convert to 0/1
-
+    input_df[bool_cols] = input_df[bool_cols].astype(int)  
     # Run prediction
     pred = model.predict(input_df)[0]
     prob = model.predict_proba(input_df)[0][pred]
